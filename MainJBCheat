@@ -335,3 +335,64 @@ game.StarterGui:SetCore(
     }
 )
 end)
+
+local Button2 = Section1:CreateButton("AI AimBot", function()
+getgenv().toggled = true
+
+getgenv().old = getgenv().old or require(game:GetService("ReplicatedStorage").Module.RayCast).RayIgnoreNonCollideWithIgnoreList
+
+if getgenv().toggled then
+	require(game:GetService("ReplicatedStorage").Module.RayCast).RayIgnoreNonCollideWithIgnoreList = function(...)
+		local nearestDistance, nearestEnemy = 600, nil
+		local localPlayer = game:GetService("Players").LocalPlayer
+		local localTeam = localPlayer.Team
+
+		for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+			if player ~= localPlayer then
+				local playerTeam = player.Team
+				local isEnemy = false
+				
+				if localTeam.Name == "Police" then
+					if playerTeam.Name == "Prisoner" or playerTeam.Name == "Criminal" then
+						isEnemy = true
+					end
+				elseif localTeam.Name == "Prisoner" then
+					if playerTeam.Name == "Police" then
+						isEnemy = true
+					end
+				elseif localTeam.Name == "Criminal" then
+					if playerTeam.Name == "Police" then
+						isEnemy = true
+					end
+				end
+
+				if isEnemy and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+					local distance = (player.Character.HumanoidRootPart.Position - localPlayer.Character.HumanoidRootPart.Position).Magnitude
+					if distance < nearestDistance then
+						nearestDistance = distance
+						nearestEnemy = player
+					end
+				end
+			end
+		end
+
+		local arg = {old(...)}
+		
+		if (tostring(getfenv(2).script) == "BulletEmitter" or tostring(getfenv(2).script) == "Taser") and nearestEnemy then
+			arg[1] = nearestEnemy.Character.HumanoidRootPart
+			arg[2] = nearestEnemy.Character.HumanoidRootPart.Position
+		end
+		
+		return unpack(arg)
+	end
+else
+	require(game:GetService("ReplicatedStorage").Module.RayCast).RayIgnoreNonCollideWithIgnoreList = getgenv().old
+end
+game.StarterGui:SetCore(
+    "SendNotification",
+    {
+        Title = "KrtekHub",
+        Text = "AI AimBot Enabled!"
+    }
+)
+end)
