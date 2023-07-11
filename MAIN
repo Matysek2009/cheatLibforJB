@@ -1,0 +1,375 @@
+repeat
+    wait()
+until game:IsLoaded()
+
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local UserInputService = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Player = Players.LocalPlayer
+
+local Name = "Jailbreak.json"
+local Config = {
+    WindowName = "KrtekHub v4.6.0",
+    Color = Color3.fromRGB(255, 0, 0),
+}
+
+game.StarterGui:SetCore(
+    "SendNotification",
+    {
+        Title = "KrtekHub",
+        Text = "Hack Successfully Loaded!"
+    }
+)
+wait(1)
+game.StarterGui:SetCore(
+    "SendNotification",
+    {
+        Title = "KrtekHub",
+        Text = "RagDoll and FallDamage are now Disabled"
+    }
+)
+
+local Settings = {}
+
+if not pcall(function()
+    readfile("Chicken Hub//" .. Name)
+end) then
+    writefile("Chicken Hub//" .. Name, HttpService:JSONEncode(Settings))
+end
+
+Settings = HttpService:JSONDecode(readfile("Chicken Hub//" .. Name))
+
+local function Save()
+    writefile("Chicken Hub//" .. Name, HttpService:JSONEncode(Settings))
+end
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
+local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
+
+local Tab1 = Window:CreateTab("Made by Chicken_Boom#3350")
+
+local Section1 = Tab1:CreateSection("Main Cool Buttons")
+local Section2 = Tab1:CreateSection("WalkSpeed/JumpPower")
+
+local Toggle1 = Section1:CreateToggle("'H' Key Fly", Settings.Sex2, function(State)
+Settings.Sex2 = State
+local Max = 0
+local Players = Players
+local LP = Players.LocalPlayer
+local Mouse = LP:GetMouse()
+Mouse.KeyDown:connect(
+    function(k)
+        if k:lower() == "h" then
+            Max = Max + 1
+            getgenv().Fly = false
+            if Settings.Sex2 then
+                local T = LP.Character.UpperTorso
+                local S = {
+                    F = 0,
+                    B = 0,
+                    L = 0,
+                    R = 0
+                }
+                local S2 = {
+                    F = 0,
+                    B = 0,
+                    L = 0,
+                    R = 0
+                }
+                local SPEED = 5
+                local function FLY()
+                    getgenv().Fly = true
+                    local BodyGyro = Instance.new("BodyGyro", T)
+                    local BodyVelocity = Instance.new("BodyVelocity", T)
+                    BodyGyro.P = 9e4
+                    BodyGyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+                    BodyGyro.cframe = T.CFrame
+                    BodyVelocity.velocity = Vector3.new(0, 0.1, 0)
+                    BodyVelocity.maxForce = Vector3.new(9e9, 9e9, 9e9)
+                    spawn(
+                        function()
+                            repeat
+                                wait()
+                                LP.Character.Humanoid.PlatformStand = true
+                                if S.L + S.R ~= 0 or S.F + S.B ~= 0 then
+                                    SPEED = 100
+                                elseif not (S.L + S.R ~= 0 or S.F + S.B ~= 0) and SPEED ~= 0 then
+                                    SPEED = 0
+                                end
+                                if (S.L + S.R) ~= 0 or (S.F + S.B) ~= 0 then
+                                    BodyVelocity.velocity =
+                                        ((Workspace.CurrentCamera.CoordinateFrame.lookVector * (S.F + S.B)) +
+                                        ((Workspace.CurrentCamera.CoordinateFrame *
+                                            CFrame.new(S.L + S.R, (S.F + S.B) * 0.2, 0).p) -
+                                            Workspace.CurrentCamera.CoordinateFrame.p)) *
+                                        SPEED
+                                    S2 = {
+                                        F = S.F,
+                                        B = S.B,
+                                        L = S.L,
+                                        R = S.R
+                                    }
+                                elseif (S.L + S.R) == 0 and (S.F + S.B) == 0 and SPEED ~= 0 then
+                                    BodyVelocity.velocity =
+                                        ((Workspace.CurrentCamera.CoordinateFrame.lookVector * (S2.F + S2.B)) +
+                                        ((Workspace.CurrentCamera.CoordinateFrame *
+                                            CFrame.new(S2.L + S2.R, (S2.F + S2.B) * 0.2, 0).p) -
+                                            Workspace.CurrentCamera.CoordinateFrame.p)) *
+                                        SPEED
+                                else
+                                    BodyVelocity.velocity = Vector3.new(0, 0.1, 0)
+                                end
+                                BodyGyro.cframe = Workspace.CurrentCamera.CoordinateFrame
+                            until not getgenv().Fly
+                            S = {
+                                F = 0,
+                                B = 0,
+                                L = 0,
+                                R = 0
+                            }
+                            S2 = {
+                                F = 0,
+                                B = 0,
+                                L = 0,
+                                R = 0
+                            }
+                            SPEED = 0
+                            BodyGyro:destroy()
+                            BodyVelocity:destroy()
+                            LP.Character.Humanoid.PlatformStand = false
+                        end
+                    )
+                end
+                Mouse.KeyDown:connect(
+                    function(k)
+                        if k:lower() == "w" then
+                            S.F = 1
+                        elseif k:lower() == "s" then
+                            S.B = -1
+                        elseif k:lower() == "a" then
+                            S.L = -1
+                        elseif k:lower() == "d" then
+                            S.R = 1
+                        end
+                    end
+                )
+                Mouse.KeyUp:connect(
+                    function(k)
+                        if k:lower() == "w" then
+                            S.F = 0
+                        elseif k:lower() == "s" then
+                            S.B = 0
+                        elseif k:lower() == "a" then
+                            S.L = 0
+                        elseif k:lower() == "d" then
+                            S.R = 0
+                        end
+                    end
+                )
+                FLY()
+                if Max == 2 then
+                    getgenv().Fly = false
+                    Max = 0
+                end
+            end
+        end
+    end
+)
+end)
+
+
+local Toggle3 = Section1:CreateToggle("Instant 'E' Key", Settings.Ants, function(State)
+    Settings.Ants = State
+    local UI = require(ReplicatedStorage.Module:WaitForChild("UI"))
+    spawn(function()
+        while wait() and Settings.Ants do
+            for i, v in pairs(UI.CircleAction.Specs) do
+                v.Duration = 0
+                v.Timed = true
+            end
+        end
+    end)
+end)
+
+local Toggle5 = Section1:CreateToggle("Turbo Guns", Settings.Ants1, function(State)
+    Settings.Ants1 = State
+    spawn(function()
+        while wait() and Settings.Ants1 do
+            for i, v in pairs(game:GetService("ReplicatedStorage").Game.ItemConfig:GetChildren()) do
+                local g = require(v)
+                g.MagSize = math.huge
+                g.CamShakeMagnitude = 0
+                g.FireAuto = true
+                g.FireFreq = 1000
+                g.BulletsSpread = -10
+                g.BulletsPerShot = 15
+            end
+        end
+    end)
+end)
+
+local keys, network = loadstring(game:HttpGet("https://raw.githubusercontent.com/Matysek2009/cheatLibforJB/main/NoRagdollANDFallDamage"))()
+local tagUtils = require(game:GetService("ReplicatedStorage").Tag.TagUtils)
+local oldIsPointInTag
+
+tagUtils.isPointInTag = function(point, tag)
+    if tag == "NoRagdoll" or tag == "NoFallDamage" then 
+        return true
+    end
+    
+    return oldIsPointInTag(point, tag)
+end
+
+local oldFireServer = getupvalue(network.FireServer, 1)
+setupvalue(network.FireServer, 1, function(key, ...)
+    if key == keys.Damage then
+        return
+    end
+
+    return oldFireServer(key, ...)
+end)
+
+local Toggle12 = Section2:CreateToggle("Use WalkSpeed and JumpPower", Settings.Go, function(State)
+    Settings.Go = State
+    RunService.Stepped:Connect(function()
+        if Settings.Go then
+            Player.Character.Humanoid.WalkSpeed = Settings.WalkSpeed
+            Player.Character.Humanoid.JumpPower = Settings.JumpPower
+            if not UserInputService.WindowFocused then
+                RunService:SetFastFlag("SetCoreGuiEnabled", false)
+            end
+        end
+    end)
+end)
+
+local Toggle16 = Section1:CreateToggle("AI AimBot", Settings.AimBot, function(State)
+    Settings.AimBot = State
+    if Settings.AimBot then
+        getgenv().toggled = true
+        getgenv().old = getgenv().old or require(game:GetService("ReplicatedStorage").Module.RayCast).RayIgnoreNonCollideWithIgnoreList
+        
+        require(game:GetService("ReplicatedStorage").Module.RayCast).RayIgnoreNonCollideWithIgnoreList = function(...)
+            local nearestDistance, nearestEnemy = 600, nil
+            local localPlayer = game:GetService("Players").LocalPlayer
+            local localTeam = localPlayer.Team
+            
+            for i, v in pairs(game:GetService("Players"):GetPlayers()) do
+                if v ~= localPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                    local vTeam = v.Team
+                    if (localTeam.Name == "Police" and (vTeam.Name == "Criminal" or vTeam.Name == "Prisoner")) or
+                       (localTeam.Name == "Criminal" and vTeam.Name == "Police") or
+                       (localTeam.Name == "Prisoner" and vTeam.Name == "Police") then
+                        local distance = (v.Character.HumanoidRootPart.Position - localPlayer.Character.HumanoidRootPart.Position).Magnitude
+                        if distance < nearestDistance then
+                            nearestDistance = distance
+                            nearestEnemy = v
+                        end
+                    end
+                end
+            end
+            
+            local arg = {old(...)}
+            if (tostring(getfenv(2).script) == "BulletEmitter" or tostring(getfenv(2).script) == "Taser") and nearestEnemy then
+                arg[1] = nearestEnemy.Character.HumanoidRootPart
+                arg[2] = nearestEnemy.Character.HumanoidRootPart.Position
+            end
+            return unpack(arg)
+        end
+    else
+        require(game:GetService("ReplicatedStorage").Module.RayCast).RayIgnoreNonCollideWithIgnoreList = getgenv().old
+        getgenv().toggled = false
+    end
+end)
+
+local TextBox2 = Section2:CreateTextBox("WalkSpeed", "Only Numbers", true, function(Value)
+    Settings.WalkSpeed = tonumber(Value) or 0
+end)
+
+local TextBox3 = Section2:CreateTextBox("JumpPower", "Only Numbers", true, function(Value)
+    Settings.JumpPower = tonumber(Value) or 0
+end)
+
+local Toggle2 = Section1:CreateToggle("Infinite Jump", Settings.InfiniteJump, function(State)
+    Settings.InfiniteJump = State
+    UserInputService.JumpRequest:Connect(function()
+        if Settings.InfiniteJump then
+            Player.Character.Humanoid:ChangeState("Jumping")
+        end
+    end)
+end)
+
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/Matysek2009/cheatLibforJB/main/ESP"))()
+
+local Toggle6 = Section1:CreateToggle("Enable ESP", Settings.Esp, function(State)
+    Settings.Esp = State
+    ESP:Toggle(Settings.Esp)
+end)
+
+local Toggle7 = Section1:CreateToggle("Player ESP", Settings.PlayerEsp, function(State)
+    Settings.PlayerEsp = State
+    ESP.Players = Settings.PlayerEsp
+end)
+
+local Toggle8 = Section1:CreateToggle("Tracers ESP", Settings.Tracers, function(State)
+    Settings.Tracers = State
+    ESP.Tracers = Settings.Tracers
+end)
+
+local Toggle9 = Section1:CreateToggle("Name ESP", Settings.EspNames, function(State)
+    Settings.EspNames = State
+    ESP.Names = Settings.EspNames
+end)
+
+local Toggle10 = Section1:CreateToggle("Boxes ESP", Settings.Boxes, function(State)
+    Settings.Boxes = State
+    ESP.Boxes = Settings.Boxes
+end)
+
+local Toggle11 = Section1:CreateToggle("AirDrop ESP", Settings.Orange, function(State)
+    Settings.Orange = State
+    spawn(function()
+        while wait(3) and Settings.Orange do
+            ESP:AddObjectListener(game:GetService("Workspace"), {
+                Color = Color3.new(1, 0, 0),
+                Type = "Model",
+                PrimaryPart = function(v)
+                    if v.Name == "Drop" then
+                        local H = v:FindFirstChildWhichIsA("BasePart")
+                        while not H do
+                            wait()
+                            H = v:FindFirstChildWhichIsA("BasePart")
+                        end
+                        return H
+                    end
+                end,
+                Validator = function(v)
+                    if v.Name == "Drop" then
+                        return not game.Players:GetPlayerFromCharacter(v) and v
+                    end
+                end,
+                CustomName = function(v)
+                    return v.Name
+                end,
+                IsEnabled = "Red",
+            })
+        end
+    end)
+end)
+
+local Button1 = Section1:CreateButton("Hack Keycard System", function()
+local plrUtils = game:GetService("ReplicatedStorage").Game.PlayerUtils
+local oldHasKey = require(plrUtils).hasKey
+require(plrUtils).hasKey = function() 
+    return true
+end
+game.StarterGui:SetCore(
+    "SendNotification",
+    {
+        Title = "KrtekHub",
+        Text = "You no longer need keycard to open doors"
+    }
+)
+end)
