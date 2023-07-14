@@ -7,12 +7,13 @@ local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Version = "4.6.1"
 
 local Player = Players.LocalPlayer
 
 local Name = "Jailbreak.json"
 local Config = {
-    WindowName = "KrtekHub v4.6.0",
+    WindowName = ("KrtekHub " .. Version),
     Color = Color3.fromRGB(255, 0, 0),
 }
 
@@ -46,7 +47,7 @@ local function Save()
     writefile("Chicken Hub//" .. Name, HttpService:JSONEncode(Settings))
 end
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/1201for/V.G-Hub/main/test"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Matysek2009/cheatLibforJB/main/LIB"))()
 local Window = Library:CreateWindow(Config, game:GetService("CoreGui"))
 
 local Tab1 = Window:CreateTab("Made by Chicken_Boom#3350")
@@ -257,15 +258,17 @@ local Toggle16 = Section1:CreateToggle("AI AimBot", Settings.AimBot, function(St
             local localTeam = localPlayer.Team
             
             for i, v in pairs(game:GetService("Players"):GetPlayers()) do
-                if v ~= localPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                if v ~= localPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") and v.Character:FindFirstChild("Humanoid") then
                     local vTeam = v.Team
                     if (localTeam.Name == "Police" and (vTeam.Name == "Criminal" or vTeam.Name == "Prisoner")) or
                        (localTeam.Name == "Criminal" and vTeam.Name == "Police") or
                        (localTeam.Name == "Prisoner" and vTeam.Name == "Police") then
-                        local distance = (v.Character.HumanoidRootPart.Position - localPlayer.Character.HumanoidRootPart.Position).Magnitude
-                        if distance < nearestDistance then
-                            nearestDistance = distance
-                            nearestEnemy = v
+                        if v.Character.Humanoid.Health > 0 then
+                            local distance = (v.Character.HumanoidRootPart.Position - localPlayer.Character.HumanoidRootPart.Position).Magnitude
+                            if distance < nearestDistance then
+                                nearestDistance = distance
+                                nearestEnemy = v
+                            end
                         end
                     end
                 end
@@ -283,6 +286,7 @@ local Toggle16 = Section1:CreateToggle("AI AimBot", Settings.AimBot, function(St
         getgenv().toggled = false
     end
 end)
+
 
 local TextBox2 = Section2:CreateTextBox("WalkSpeed", "Only Numbers", true, function(Value)
     Settings.WalkSpeed = tonumber(Value) or 0
@@ -328,7 +332,7 @@ local Toggle10 = Section1:CreateToggle("Boxes ESP", Settings.Boxes, function(Sta
     ESP.Boxes = Settings.Boxes
 end)
 
-local Toggle11 = Section1:CreateToggle("AirDrop ESP", Settings.Orange, function(State)
+--[[local Toggle11 = Section1:CreateToggle("AirDrop ESP", Settings.Orange, function(State)
     Settings.Orange = State
     spawn(function()
         while wait(3) and Settings.Orange do
@@ -357,7 +361,7 @@ local Toggle11 = Section1:CreateToggle("AirDrop ESP", Settings.Orange, function(
             })
         end
     end)
-end)
+end)]]
 
 local Button1 = Section1:CreateButton("Hack Keycard System", function()
 local plrUtils = game:GetService("ReplicatedStorage").Game.PlayerUtils
